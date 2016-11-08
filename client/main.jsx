@@ -8,12 +8,12 @@ import { render } from 'react-dom';
 
 import '../imports/startup/accounts-config.js';
 
-import App from '../imports/ui/App.jsx';
-
+//add import App2 
+import App2 from '../imports/ui/App2.jsx';
  
 
 Meteor.startup(() => {
 
-  render(<App />, document.getElementById('render-target'));
+  render(<App2 />, document.getElementById('render-target'));
 
 });

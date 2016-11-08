@@ -3,25 +3,25 @@
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
 
-import { Tasks } from './tasks.js';
+import { Requests } from './requests.js';
 
 if (Meteor.isServer) {
-  describe('Tasks', () => {
+  describe('Requests', () => {
     describe('methods', () => {
       const userId = Random.id();
-      let taskId;
+      let requestId;
 
       beforeEach(() => {
-        Tasks.remove({});
-        taskId = Tasks.insert({
-          text: 'test task',
+        Requests.remove({});
+        requestId = Tasks.insert({
+          text: 'test request',
           createdAt: new Date(),
           owner: userId,
           username: 'tmeasday',
         });
       });
 
-      it('can delete owned task', () => {
+      it('can delete owned request', () => {
       });
     });
   });

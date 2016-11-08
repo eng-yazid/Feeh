@@ -1,12 +1,15 @@
 import React, {Component, PropTypes} from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
-import { Tasks } from '../api/tasks.js';
-import Task from './Task.jsx';
+import { Requests } from '../api/requests.js';
+
+
+// also import Request.jsx
+import Request from './Request.jsx';
 import ReactDOM from 'react-dom';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import { Meteor } from 'meteor/meteor';
 //App Component - represents the whole App
-class App extends Component{
+class App2 extends Component{
 
 	constructor(props){
 		super(props);
@@ -19,16 +22,8 @@ class App extends Component{
 		event.preventDefault();
 		//Find the text field via the React ref
 		const  text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
-
-//------------------------- client side methods -----------------------------//
-		// Tasks.insert({
-		// 	text,
-		// 	createdAt : new Date(),
-		// 	owner: Meteor.userId(),		//_id od logged in user
-		// 	username: Meteor.user().username,		// username of logged in user
-		// });
-//------------------------- client side methods -----------------------------//
-		Meteor.call('tasks.insert',text);
+		//--------changed from tasks to small requests----------//
+		Meteor.call('requests.insert',text);
 
 
 		//clear form
@@ -40,20 +35,26 @@ class App extends Component{
 			hideCompleted: !this.state.hideCompleted,
 		});
 	}
+	//--------changed from renderTasks to renderRequests----------//
 
-	renderTasks(){
-		let filteredTasks  = this.props.tasks;
+	renderRequests(){
+		//--------changed from tasks to small requests and from filteredTasks to filteredRequests----------//
+		let filteredRequests  = this.props.requests;
 		if( this.state.hideCompleted){
-			filteredTasks = filteredTasks.filter(task => !task.checked);
+		//--------changed filteredTasks to filteredRequests twice + from task to request twice----------//
+			filteredRequests = filteredRequests.filter(request => !request.checked);
 		}
-
-		return filteredTasks.map((task) => {
+		//--------changed filteredTasks to filteredRequests  + from task to request ----------//
+		return filteredRequests.map((request) => {
 			const currentUserId = this.props.currentUser && this.props.currentUser._id;
-			const showPrivateButton = task.owner === currentUserId;
+			//--------changed from task to request ----------//
+			const showPrivateButton = request.owner === currentUserId;
+			console.log("currentUserId", currentUserId);
 			return (
-				<Task
-					key={task._id}
-					task= {task}
+				//--------Task to Request  + from task to request twice ----------//
+				<Request
+					key={request._id}
+					request= {request}
 					showPrivateButton = {showPrivateButton}
 				/>
 			);
@@ -66,7 +67,7 @@ class App extends Component{
 			<div className="container">
 
 			<header>
-	        	<h1>Todo List {this.props.incompleteCount}</h1>
+	        	<h1>Request List {this.props.incompleteCount}</h1>
 
 	        	<label className= "hide-completed">
 	        		<input
@@ -75,24 +76,23 @@ class App extends Component{
 	        			checked={this.state.hideCompleted}
 	        			onClick={this.toggleHideCompleted.bind(this)}
 	        		/>
-	        		Hide Completed Tasks
+	        		Hide Completed Requests
 	        	</label>
 
 	        	<AccountsUIWrapper  />
-
 	        	{this.props.currentUser ?
 	        	<form className="new-task" onSubmit = {this.handleSubmit.bind(this)} >
 	        		<input
 	        			type="text"
 	        			ref="textInput"
-	        			placeholder = "Type to add new tasks"
+	        			placeholder = "Type to add new request"
 	        		/>
 	        	</form> :''
 	        	}
 	        </header>
 
 			<ul>
-	        	{this.renderTasks()}
+	        	{this.renderRequests()}
 	        </ul>
 
 	      </div>
@@ -100,23 +100,23 @@ class App extends Component{
 	}
 
 }
-App.propTypes = {
+App2.propTypes = {
 
-	tasks: PropTypes.array.isRequired,
+
+	requests: PropTypes.array.isRequired,
 	incompleteCount: PropTypes.number.isRequired,
 	currentUser: PropTypes.object,
 };
 
 
 export default createContainer(() => {
-	Meteor.subscribe('tasks');
+	Meteor.subscribe('requests-publication-name');
 	
   return {
-
-     tasks: Tasks.find({}, { sort: { createdAt: -1 } }).fetch(),
-     incompleteCount: Tasks.find({ checked:{$ne:true} }).count(),
+     requests: Requests.find({}, { sort: { createdAt: -1 } }).fetch(),
+     incompleteCount: Requests.find({ checked:{$ne:true} }).count(),
      currentUser: Meteor.user(),
 
   };
 
-}, App);
+}, App2);
